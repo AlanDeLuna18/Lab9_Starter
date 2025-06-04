@@ -68,22 +68,31 @@
       </fieldset>
     </form>
 
+    <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
+<script>
+  window.TrackJS && TrackJS.install({ 
+    token: "93f3c998ab5941fab17e00892e910100",
+    application: "lab-9-"
+    // for more configuration options, see https://docs.trackjs.com
+  });
+</script>
+
     <section id="error-btns">
-      <button>Console Log</button>
-      <button>Console Error</button>
-      <button>Console Count</button>
-      <button>Console Warn</button>
-      <button>Console Assert</button>
-      <button>Console Clear</button>
-      <button>Console Dir</button>
-      <button>Console dirxml</button>
-      <button>Console Group Start</button>
-      <button>Console Group End</button>
-      <button>Console Table</button>
-      <button>Start Timer</button>
-      <button>End Timer</button>
-      <button>Console Trace</button>
-      <button>Trigger a Global Error</button>
+      <button onclick = "consoleLogError()">Console Log</button>
+      <button onclick = "consoleError()">Console Error</button>
+      <button onclick = "consoleCount()">Console Count</button>
+      <button onclick = "warnConsole()">Console Warn</button>
+      <button onclick = "assertConsole()">Console Assert</button>
+      <button onclick = "consoleClear()">Console Clear</button>
+      <button onclick = "consoleDir()" id = "console-dir">Console Dir</button>
+      <button onclick = "consoleDirxml()">Console dirxml</button>
+      <button onclick = "groupStart()">Console Group Start</button>
+      <button onclick = "finishGroup()">Console Group End</button>
+      <button onclick = "table()">Console Table</button>
+      <button onclick = "timerStart()">Start Timer</button>
+      <button onclick = "timerEnd()">End Timer</button>
+      <button onclick = "trace()">Console Trace</button>
+      <button onclick = "globalTrigger()">Trigger a Global Error</button>
     </section>
   </main>
 
@@ -95,13 +104,158 @@
       let firstNum = document.querySelector('#first-num').value;
       let secondNum = document.querySelector('#second-num').value;
       let operator = document.querySelector('#operator').value;
-      output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
-    });
+      //output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+
+      
+    class InputNotNumberError extends Error 
+    {
+      constructor(message) 
+      {
+        super(message);
+        this.name = "InputNotNumberError";
+      }
+    }
+
+        
+    try 
+    {
+      let num1 = parseFloat(firstNum);
+      let num2 = parseFloat(secondNum);
+
+      if (isNaN(num1) || isNaN(num2)) 
+      {
+        throw new InputNotNumberError("Both inputs must be valid numbers.");
+      }
+
+      output.innerHTML = eval(`${num1} ${operator} ${num2}`);
+    } 
+    catch (err) 
+    {
+      if (err instanceof InputNotNumberError) 
+      {
+        console.error(`Custom Error: ${err.name} - ${err.message}`);
+      } 
+      else 
+      {
+        console.error("Unexpected Error:", err);
+      }
+      output.innerHTML = `Error: ${err.message}`;
+    }
+  });
+
+    
+
+
+    function consoleLogError()
+    {
+      console.log("Console Log Demo"); 
+    }
+
+    function consoleError()
+    {
+      console.error("Console Error Demo");
+    }
+
+    function consoleCount()
+    {
+      console.log("Count Button: " + counter);
+      counter += 1; 
+    }
+
+    function warnConsole()
+    {
+      console.warn("Console Warn Demo");
+    }
+   
+    function assertConsole()
+    {
+      console.assert(2 == 3, "2 does not equal 3");
+    }
+
+    function consoleClear()
+    {
+      console.clear();
+    }
+
+    function consoleDir()
+    {
+      console.dir(document.getElementById("console-dir"));
+    }
+
+    function consoleDirxml()
+    {
+      console.dirxml(document.getElementById("console-dir"));
+    }
+
+    function groupStart()
+    {
+     console.group("group start demo");
+    }
+
+    function finishGroup()
+    {
+      console.groupEnd();
+    }
+
+    function table()
+    {
+      const exampleData = [
+      { First: 10, Operator: '+', Second: 5, Result: 15 },
+      { First: 20, Operator: '-', Second: 8, Result: 12 },
+      { First: 7, Operator: '*', Second: 3, Result: 21 },
+      { First: 16, Operator: '/', Second: 4, Result: 4 }
+      ];
+    
+
+      console.table(exampleData);
+    }
+
+    function timerStart()
+    {
+      console.time("console timer demo");
+    }
+
+    function timerEnd()
+    {
+      console.timeEnd("console timer demo");
+    }
+
+    function trace()
+    {
+      console.trace("Trace console demo"); 
+    }
+
+
+    function reportJSError(message, source, lineno, colno, error) {
+      console.log("Reporting JS Error:");
+      console.log("Message:", message);
+      console.log("Source:", source);
+      console.log("Line:", lineno);
+      console.log("Column:", colno);
+      console.log("Error object:", error);
+    }
+
+    function globalTrigger()
+    {
+        try {
+        throw new Error("Triggered error");
+      } catch (err) {
+        console.log("ERROR ERROR ERROR BAD BAD BAD");
+        reportJSError(err.message, "globalTrigger", 0, 0, err);
+      }
+    }
+
+
+
+
+
 
     let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
 
-    // Start your code here
-    // You may move this JS to another file if you wish
+    TrackJS.track('Testing TrackJS!');
+    
+    let counter = 0; 
+
   </script>
 </body>
 
